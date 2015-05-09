@@ -21,8 +21,6 @@
 
 @implementation DZNSegmentedControl
 @synthesize barPosition = _barPosition;
-@synthesize height = _height;
-@synthesize width = _width;
 
 #pragma mark - Initialize Methods
 
@@ -32,11 +30,11 @@
     
     _showsCount = YES;
     _selectedSegmentIndex = -1;
+    _font = [UIFont systemFontOfSize:15.0f];
     _selectionIndicatorHeight = 2.0f;
     _animationDuration = 0.2;
     _autoAdjustSelectionIndicatorWidth = YES;
-    _font = [UIFont systemFontOfSize:15.0f];
-
+    
     _selectionIndicator = [UIView new];
     _selectionIndicator.backgroundColor = self.tintColor;
     [self addSubview:_selectionIndicator];
@@ -46,6 +44,7 @@
     [self addSubview:_hairline];
     
     _colors = [NSMutableDictionary new];
+    
     _counts = [NSMutableArray array];
     
     _initializing = NO;
@@ -104,7 +103,6 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    
     [self sizeToFit];
     
     if ([self buttons].count == 0) {
@@ -256,7 +254,7 @@
         return frame;
     }
     
-    frame.origin.y = (_barPosition > UIBarPositionBottom) ? 0.0f : (button.frame.size.height-self.selectionIndicatorHeight);
+    frame.origin.y = (_barPosition > UIBarPositionBottom) ? 0.0f : (button.frame.size.height-self.selectionIndicatorHeight*0.5);
     
     if (self.autoAdjustSelectionIndicatorWidth) {
         
@@ -274,11 +272,11 @@
             attributes = [attributedString attributesAtIndex:0 effectiveRange:range];
         }
         
-        frame.size = CGSizeMake([title sizeWithAttributes:attributes].width, self.selectionIndicatorHeight);
+        frame.size = CGSizeMake([title sizeWithAttributes:attributes].width, self.selectionIndicatorHeight*0.5);
         frame.origin.x = (button.frame.size.width*(self.selectedSegmentIndex))+(button.frame.size.width-frame.size.width)/2;
     }
     else {
-        frame.size = CGSizeMake(button.frame.size.width, self.selectionIndicatorHeight);
+        frame.size = CGSizeMake(button.frame.size.width, self.selectionIndicatorHeight*0.5);
         frame.origin.x = (button.frame.size.width*(self.selectedSegmentIndex));
     }
     
@@ -334,30 +332,6 @@
 
 #pragma mark - Setter Methods
 
-- (void)setFrame:(CGRect)frame
-{
-    _width = CGRectGetWidth(frame);
-    _height = CGRectGetHeight(frame);
-    
-    [super setFrame:frame];
-    
-    [self layoutIfNeeded];
-}
-
-- (void)setHeight:(CGFloat)height
-{
-    _height = height;
-    
-    [self layoutSubviews];
-}
-
-- (void)setWidth:(CGFloat)width
-{
-    _width = width;
-    
-    [self layoutSubviews];
-}
-
 - (void)setTintColor:(UIColor *)color
 {
     if (!color || !self.items || self.initializing) {
@@ -365,7 +339,7 @@
     }
     
     [super setTintColor:color];
-    
+
     [self setTitleColor:color forState:UIControlStateHighlighted];
     [self setTitleColor:color forState:UIControlStateSelected];
 }
